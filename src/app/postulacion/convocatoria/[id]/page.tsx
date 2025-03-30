@@ -32,7 +32,7 @@ import uploadFileServer from "@/modules/projects/server/upload-file";
 
 export default function FormularioProyecto() {
 
-    const { convocatoriaId }: { convocatoriaId: string } = useParams();
+    const { id: convocatoriaId }: { id: string } = useParams();
 
     const [convocatoria, setConvocatoria] = useState<Convocatoria>();
 
