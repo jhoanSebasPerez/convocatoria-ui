@@ -103,11 +103,11 @@ export default function FormularioProyecto({ params }: FormularioProyectoProps) 
                 const response = await uploadFile(file);
 
                 if (response.error) {
-                    const body = await response.json();
+                    const body = response.error
                     const message = body.message || "Error uploading file";
                     throw new Error(message);
                 } else {
-                    const data = await response.data
+                    const data = response.data
                     localStorage.setItem("uploadedFileUrl", data.url);
                     setValue("documento", data.url);
                     setFileName(file.name);
