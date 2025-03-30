@@ -19,13 +19,13 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                 <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
                 <Card variant="outlined">
                     <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: "white", borderRadius: "4px" }}>
-                        {/*<Image
+                        <Image
                             src="/logo.png"
                             alt="Logo UFPS"
                             width={300}
                             height={200}
                             priority
-                        />*/}
+                        />
                     </Box>
                     {children}
                 </Card>
