@@ -6,7 +6,7 @@ export default async function uploadFile(file: File) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await post("/api/upload-file", {
+    const response = await post("upload", {
         method: "POST",
         body: formData,
     });
