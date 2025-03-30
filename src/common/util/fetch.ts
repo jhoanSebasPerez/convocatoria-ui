@@ -5,7 +5,6 @@ import { ResponseType } from "../interfaces/response-type";
 import { getErrorMessage } from "./error";
 import { cookies } from "next/headers";
 
-
 const getHeaders = async () => {
     const cookieStore = await cookies(); // 🔹 Obtener todas las cookies
     const cookieHeader = cookieStore
@@ -19,6 +18,22 @@ const getHeaders = async () => {
         credentials: "include", // 🔹 Asegurar que las credenciales se incluyan
     };
 };
+
+export const uploadFile = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const headers = await getHeaders();
+    const response = await fetch(`${API_URL}/upload`, {
+        method: "POST",
+        headers: { ...headers },
+        body: formData,
+    });
+    const parsedRes = await response.json();
+    if (!response.ok) {
+        return { error: getErrorMessage(parsedRes), data: null };
+    }
+    return { error: "", data: parsedRes };
+}
 
 export const post = async <T>(path: string, data: T) => {
     const headers = await getHeaders();

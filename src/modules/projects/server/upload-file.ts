@@ -1,12 +1,11 @@
 "use server";
 
-import { post } from "@/common/util/fetch";
+import { uploadFile } from "@/common/util/fetch";
 
-export default async function uploadFile(file: File) {
-    const formData = new FormData();
-    formData.append("file", file);
 
-    const response = await post("upload", formData);
+export default async function uploadFileServer(file: File) {
+
+    const response = await uploadFile(file);
 
     if (response.error) {
         return { error: response.error };

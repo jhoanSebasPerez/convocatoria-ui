@@ -27,7 +27,7 @@ import getConvocatoriaById from "@/modules/convocatorias/server/get-convocatoria
 import { Convocatoria } from "@/modules/convocatorias/convocatoria-types";
 import { CloudUploadOutlined, RemoveCircle } from "@mui/icons-material";
 import CustomDatePicker from "@/components/date-picker";
-import uploadFile from "@/modules/projects/server/upload-file";
+import uploadFileServer from "@/modules/projects/server/upload-file";
 
 type FormularioProyectoProps = {
     readonly params: Promise<{ convocatoriaId: string }>;
@@ -100,7 +100,7 @@ export default function FormularioProyecto({ params }: FormularioProyectoProps) 
             }, 300);
 
             try {
-                const response = await uploadFile(file);
+                const response = await uploadFileServer(file);
 
                 if (response.error) {
                     const body = response.error
