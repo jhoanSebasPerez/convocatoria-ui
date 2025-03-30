@@ -107,7 +107,7 @@ export default function FormularioProyecto({ params }: FormularioProyectoProps) 
                     const message = body.message || "Error uploading file";
                     throw new Error(message);
                 } else {
-                    const data = response.data
+                    const data = response;
                     localStorage.setItem("uploadedFileUrl", data.url);
                     setValue("documento", data.url);
                     setFileName(file.name);
