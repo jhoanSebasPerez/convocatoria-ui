@@ -29,13 +29,10 @@ import { CloudUploadOutlined, RemoveCircle } from "@mui/icons-material";
 import CustomDatePicker from "@/components/date-picker";
 import uploadFileServer from "@/modules/projects/server/upload-file";
 
-type FormularioProyectoProps = {
-    readonly params: Promise<{ convocatoriaId: string }>;
-}
 
-export default function FormularioProyecto({ params }: FormularioProyectoProps) {
+export default function FormularioProyecto() {
 
-    const { convocatoriaId } = use(params);
+    const { convocatoriaId }: { convocatoriaId: string } = useParams();
 
     const [convocatoria, setConvocatoria] = useState<Convocatoria>();
 
