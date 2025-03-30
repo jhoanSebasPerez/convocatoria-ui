@@ -139,7 +139,7 @@ export default function FormularioProyecto({ params }: FormularioProyectoProps) 
         const formattedData = {
             titulo: data.titulo,
             resumen: data.resumen,
-            convocatoriaId: Array.isArray(convocatoriaId) ? convocatoriaId[0] : convocatoriaId, // Aquí deberías pasar el ID real de la convocatoria
+            convocatoriaId: Array.isArray(convocatoriaId) ? convocatoriaId[0] : String(convocatoriaId), // Aquí deberías pasar el ID real de la convocatoria
             tiempoEjecucion: parseInt(data.tiempoEjecucion, 10),
             fechaInicio: data.fechaInicio.toISOString(),
             documentoUrl: data.documento,
