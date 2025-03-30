@@ -22,10 +22,10 @@ const getHeaders = async () => {
 export const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const headers = await getHeaders();
+    //const headers = await getHeaders();
     const response = await fetch(`${API_URL}/upload`, {
         method: "POST",
-        headers: { ...headers },
+        //headers: { ...headers },
         body: formData,
     });
     const parsedRes = await response.json();
