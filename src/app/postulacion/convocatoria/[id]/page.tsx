@@ -27,6 +27,7 @@ import getConvocatoriaById from "@/modules/convocatorias/server/get-convocatoria
 import { Convocatoria } from "@/modules/convocatorias/convocatoria-types";
 import { CloudUploadOutlined, RemoveCircle } from "@mui/icons-material";
 import CustomDatePicker from "@/components/date-picker";
+import uploadFile from "@/modules/projects/server/upload-file";
 
 type FormularioProyectoProps = {
     readonly params: Promise<{ convocatoriaId: string }>;
@@ -98,24 +99,15 @@ export default function FormularioProyecto({ params }: FormularioProyectoProps) 
                 }
             }, 300);
 
-            const formData = new FormData();
-            formData.append("file", file);
-
             try {
-                const response = await fetch(`${API_URL}/upload`, {
-                    method: "POST",
-                    body: formData,
-                    headers: {
-                        "Accept": "application/json",
-                    },
-                });
+                const response = await uploadFile(file);
 
-                if (!response.ok) {
+                if (response.error) {
                     const body = await response.json();
                     const message = body.message || "Error uploading file";
                     throw new Error(message);
                 } else {
-                    const data = await response.json();
+                    const data = await response.data
                     localStorage.setItem("uploadedFileUrl", data.url);
                     setValue("documento", data.url);
                     setFileName(file.name);
