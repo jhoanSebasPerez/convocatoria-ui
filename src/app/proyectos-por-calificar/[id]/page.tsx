@@ -4,7 +4,7 @@ import { Project } from "@/modules/projects/project-type";
 import getProjetById from "@/modules/projects/server/get-project-by-id";
 import { Criterio, Rubrica } from "@/modules/rubricas/rubrica-types";
 import { useParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Convocatoria } from '../../../modules/convocatorias/convocatoria-types';
 import { Box, Chip, CircularProgress, Snackbar, Typography } from "@mui/material";
 import PdfViewer from "@/components/pdf-viewer";
@@ -13,13 +13,9 @@ import ProyectoEvaluacion from "@/modules/evaluaciones/components/evaluation-sec
 import { Evaluacion } from "@/modules/evaluaciones/evaluacion-type";
 import createEvaluacion from "@/modules/evaluaciones/server/create-evaluacion";
 
-type ProyectoPorCalificarProps = {
-    readonly params: Promise<{ id: string }>;
-}
+export default function ProyectoPorCalificarPage() {
 
-export default function ProyectoPorCalificarPage({ params }: ProyectoPorCalificarProps) {
-
-    const { id } = use(params);
+    const { id }: { id: string } = useParams();
 
     const [proyecto, setProyecto] = useState<Project | null>(null);
     const [convocatoria, setConvocatoria] = useState<Convocatoria | undefined>(undefined);

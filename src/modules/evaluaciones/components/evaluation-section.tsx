@@ -103,7 +103,7 @@ const ProyectoEvaluacion: React.FC<EvaluacionProps> = ({ proyecto, criterios, on
                 sx={{ mt: 2 }}
                 fullWidth
             >
-                {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : "Asignar Evaluador"}
+                {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : "Calificar proyecto"}
             </Button>
         </Paper>
     );

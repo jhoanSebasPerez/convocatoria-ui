@@ -26,12 +26,9 @@ import EvaluacionDetalle from "@/modules/evaluaciones/components/evaluacion-deta
 import getEvaluacionPorProyecto from "@/modules/projects/server/get-evaluacion-projecto";
 import { Evaluacion } from "@/modules/evaluaciones/evaluacion-type";
 
-type ProyectoDetalleProps = {
-    readonly params: Promise<{ id: string }>;
-}
 
-export default function ProyectoDetalle({ params }: ProyectoDetalleProps) {
-    const { id } = use(params);
+export default function ProyectoDetalle() {
+    const { id }: { id: string } = useParams();
 
     const [proyecto, setProyecto] = useState<Project | null>(null);
     const [evaluacion, setEvaluacion] = useState<Evaluacion | null>(null);

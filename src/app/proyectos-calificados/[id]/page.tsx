@@ -1,22 +1,18 @@
 "use client"
 
 import { useParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import getProjectById from '@/modules/projects/server/get-project-by-id';
 import { Project } from "@/modules/projects/project-type";
 import { Evaluacion } from "@/modules/evaluaciones/evaluacion-type";
 import getEvaluacionPorProyecto from "@/modules/projects/server/get-evaluacion-projecto";
-import { Box, Chip, CircularProgress, Paper, Typography } from "@mui/material";
+import { Box, Chip, CircularProgress, Typography } from "@mui/material";
 import PdfViewer from "@/components/pdf-viewer";
 import EvaluacionDetalle from "@/modules/evaluaciones/components/evaluacion-detalle";
 
-type EvaluacionPorProyectoProps = {
-    readonly params: Promise<{ id: string }>;
-}
+export default function EvaluacionPorProyecto() {
 
-export default function EvaluacionPorProyecto({ params }: EvaluacionPorProyectoProps) {
-
-    const { id } = use(params);
+    const { id }: { id: string } = useParams();
 
     const [project, setProject] = useState<Project | null>(null);
     const [evaluacion, setEvaluacion] = useState<Evaluacion | null>(null);
