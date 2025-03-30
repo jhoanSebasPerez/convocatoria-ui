@@ -45,7 +45,7 @@ const ProyectoEvaluacion: React.FC<EvaluacionProps> = ({ proyecto, criterios, on
             criteriosEvaluacion,
             fechaEvaluacion: new Date().toISOString(), // Add the current date as ISO string
         };
-
+        console.log("evaluación: ", evaluacion);
         onSubmit(evaluacion);
         setLoading(false);
     };
