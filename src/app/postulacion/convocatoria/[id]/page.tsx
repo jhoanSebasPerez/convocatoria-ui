@@ -105,6 +105,7 @@ export default function FormularioProyecto() {
                     throw new Error(message);
                 } else {
                     const data = response;
+                    console.log("response", data);
                     localStorage.setItem("uploadedFileUrl", data.url);
                     setValue("documento", data.url);
                     setFileName(file.name);
