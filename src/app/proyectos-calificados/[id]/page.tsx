@@ -70,7 +70,11 @@ export default function EvaluacionPorProyecto() {
             </Box>
             <Box sx={{ display: 'flex' }}>
                 <Box sx={{ width: '70%', marginRight: 4 }}>
-                    <PdfViewer url={project?.documentoUrl ?? ""} />
+                    {project?.documentoUrl ? (
+                        <PdfViewer url={project?.documentoUrl ?? ""} />
+                    ) : (
+                        <Typography variant="body1">No hay documento disponible</Typography>
+                    )}
                 </Box>
                 <Box sx={{ width: "30%" }}>
                     <Typography variant="h6">Rúbrica: {evaluacion?.rubrica?.nombre}</Typography>

@@ -225,13 +225,11 @@ export default function ProyectoDetailPage({ params }: ProyectoDetailPageProps) 
                 </Box>
 
                 <Divider sx={{ my: 3 }} />
-                {
-                    proyecto.documentoUrl && (
-                        <Box>
-                            <PdfViewer url={proyecto.documentoUrl} />
-                        </Box>
-                    )
-                }
+                {proyecto?.documentoUrl ? (
+                    <PdfViewer url={proyecto?.documentoUrl ?? ""} />
+                ) : (
+                    <Typography variant="body1">No hay documento disponible</Typography>
+                )}
             </Paper >
         );
     }

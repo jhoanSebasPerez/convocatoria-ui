@@ -79,9 +79,11 @@ export default function ProyectoPorCalificarPage() {
                     <Typography variant="body1">{proyecto?.resumen}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex' }}>
-                    <Box sx={{ width: '70%', marginRight: 4 }}>
+                    {proyecto?.documentoUrl ? (
                         <PdfViewer url={proyecto?.documentoUrl ?? ""} />
-                    </Box>
+                    ) : (
+                        <Typography variant="body1">No hay documento disponible</Typography>
+                    )}
                     <Box sx={{ width: "30%" }}>
                         <Typography variant="h6">Rúbrica: {rubrica?.nombre}</Typography>
                         <Typography variant="body2">{rubrica?.descripcion}</Typography>

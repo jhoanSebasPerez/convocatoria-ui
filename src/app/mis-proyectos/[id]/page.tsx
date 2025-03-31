@@ -87,11 +87,10 @@ export default function ProyectoDetalle() {
                             <Grid item xs={12}>
                                 <Typography><strong>Duración:</strong> {proyecto.tiempoEjecucion} meses</Typography>
                             </Grid>
-                            {proyecto.documentoUrl && (
-                                <Grid item xs={12}>
-                                    <Typography><strong>Documento:</strong> {proyecto.documentoUrl ? "📄 Sí" : "❌ No"}</Typography>
-                                    <PdfViewer url={proyecto.documentoUrl} />
-                                </Grid>
+                            {proyecto?.documentoUrl ? (
+                                <PdfViewer url={proyecto?.documentoUrl ?? ""} />
+                            ) : (
+                                <Typography variant="body1">No hay documento disponible</Typography>
                             )}
 
                         </Grid>
