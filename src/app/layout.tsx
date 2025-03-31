@@ -34,6 +34,7 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         <link href="https://ww2.ufps.edu.co/assets/img/ico/favicon.ico" rel="icon" />
+        <title>Feria de convocatoria - UFPS</title>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
