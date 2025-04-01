@@ -3,14 +3,11 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Alert, Button } from "@mui/material";
 import verifyToken from "@/modules/auth/server/verify-token";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
-type VerificacionExitosoProps = {
-    readonly params: { accessToken: string };
-};
 
-export default function VerificacionExito({ params }: VerificacionExitosoProps) {
-    const { accessToken } = params;
+export default function VerificacionExito() {
+    const { accessToken }: { accessToken: string } = useParams();
     const router = useRouter();
 
     const [loading, setLoading] = useState(false);
