@@ -1,7 +1,13 @@
 import authenticated from "@/modules/auth/server/authenticated";
 import { NextRequest } from "next/server";
 
-const unathorizedRoutes = ["/auth/login", "/auth/signup", "/activar-cuenta"];
+const unathorizedRoutes = [
+    "/auth/login",
+    "/auth/signup",
+    "/activar-cuenta",
+    "/registro-exitoso",
+    "/verify",
+];
 
 export async function middleware(request: NextRequest) {
 

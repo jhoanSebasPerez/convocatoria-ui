@@ -11,12 +11,10 @@ import ForgotPassword from '../components/forgot-password';
 import { Divider, Typography } from '@mui/material';
 import createUser from '../server/create-user';
 import NextLink from 'next/link';
-import { RegisterRequest } from '../auth-types';
-
 
 export default function Signup() {
 
-    const [response, setResponse] = React.useState({ error: "" });
+    const [state, formAction] = React.useActionState(createUser, { error: "" });
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -27,20 +25,6 @@ export default function Signup() {
         setOpen(false);
     };
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const form = event.currentTarget as HTMLFormElement;
-        const registerRequest: RegisterRequest = {
-            fullname: form.fullname.value,
-            email: form.email.value,
-            password: form.password.value,
-        }
-        const res = await createUser(response, registerRequest);
-        if (res.error) {
-            setResponse(res);
-        }
-    }
-
     return (
         <>
             <Typography
@@ -50,7 +34,7 @@ export default function Signup() {
             >
                 Registro
             </Typography>
-            <form >
+            <form action={formAction}>
                 <Box
                     sx={{
                         display: 'flex',
@@ -62,25 +46,25 @@ export default function Signup() {
                     <FormControl>
                         <FormLabel htmlFor="fullname">Nombre completo</FormLabel>
                         <TextField
-                            error={!!response.error}
-                            helperText={response.error}
+                            error={!!state.error}
+                            helperText={state.error}
                             id="fullname"
                             type="text"
                             name="fullname"
                             placeholder="Nombre completo"
-                            autoComplete="email"
+                            autoComplete="fullname"
                             autoFocus
                             required
                             fullWidth
                             variant="outlined"
-                            color={response.error ? 'error' : 'primary'}
+                            color={state.error ? 'error' : 'primary'}
                         />
                     </FormControl>
                     <FormControl>
                         <FormLabel htmlFor="email">Email</FormLabel>
                         <TextField
-                            error={!!response.error}
-                            helperText={response.error}
+                            error={!!state.error}
+                            helperText={state.error}
                             id="email"
                             type="email"
                             name="email"
@@ -90,14 +74,14 @@ export default function Signup() {
                             required
                             fullWidth
                             variant="outlined"
-                            color={response.error ? 'error' : 'primary'}
+                            color={state.error ? 'error' : 'primary'}
                         />
                     </FormControl>
                     <FormControl>
                         <FormLabel htmlFor="password">Password</FormLabel>
                         <TextField
-                            error={!!response.error}
-                            helperText={response.error}
+                            error={!!state.error}
+                            helperText={state.error}
                             name="password"
                             placeholder="••••••"
                             type="password"
@@ -107,7 +91,7 @@ export default function Signup() {
                             required
                             fullWidth
                             variant="outlined"
-                            color={response.error ? 'error' : 'primary'}
+                            color={state.error ? 'error' : 'primary'}
                         />
                     </FormControl>
 

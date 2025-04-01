@@ -43,7 +43,6 @@ const ProyectoEvaluacion: React.FC<EvaluacionProps> = ({ proyecto, criterios, on
             puntajeTotal,
             observaciones,
             criteriosEvaluacion,
-            fechaEvaluacion: new Date().toISOString(), // Add the current date as ISO string
         };
         console.log("evaluación: ", evaluacion);
         onSubmit(evaluacion);
@@ -51,14 +50,14 @@ const ProyectoEvaluacion: React.FC<EvaluacionProps> = ({ proyecto, criterios, on
     };
 
     return (
-        <Paper sx={{ maxWidth: 800, margin: "auto", mt: 4 }}>
+        <Paper sx={{ maxWidth: 800, margin: "auto", my: 4, py: 2 }}>
             <Box sx={{ mt: 0 }}>
                 {criterios.map((criterio) => (
-                    <Paper key={criterio.id} sx={{ p: 2, my: 2 }}>
+                    <Paper key={criterio.id} sx={{ pl: 2, my: 2 }}>
                         <Typography variant="h6" fontWeight="bold">{criterio.nombre}</Typography>
                         <Typography variant="body2" color="textSecondary">{criterio.descripcion}</Typography>
 
-                        <Grid container spacing={2} alignItems="center" sx={{ mt: 2 }}>
+                        <Grid container spacing={2} alignItems="center" sx={{ mt: 2, px: 2 }}>
                             <Grid item xs={10}>
                                 <Slider
                                     value={criteriosEvaluacion.find((c) => c.criterioId === criterio.id)?.puntaje || criterio.puntajeMin}
@@ -86,11 +85,11 @@ const ProyectoEvaluacion: React.FC<EvaluacionProps> = ({ proyecto, criterios, on
                 rows={3}
                 value={observaciones}
                 onChange={(e) => setObservaciones(e.target.value)}
-                sx={{ mt: 3 }}
+                sx={{ mt: 3, px: 2 }}
             />
 
             {/* Puntaje total */}
-            <Typography variant="h6" fontWeight="bold" sx={{ mt: 3 }}>
+            <Typography variant="h6" fontWeight="bold" sx={{ mt: 3, px: 3 }}>
                 Puntaje Total: {puntajeTotal}
             </Typography>
 
@@ -100,10 +99,10 @@ const ProyectoEvaluacion: React.FC<EvaluacionProps> = ({ proyecto, criterios, on
                 color="primary"
                 onClick={handleSubmit}
                 disabled={loading}
-                sx={{ mt: 2 }}
+                sx={{ mt: 2, mx: 3, width: "90%", py: 1 }}
                 fullWidth
             >
-                {loading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : "Calificar proyecto"}
+                {loading ? <CircularProgress size={20} sx={{ mr: 1, color: "white" }} /> : "Calificar proyecto"}
             </Button>
         </Paper>
     );

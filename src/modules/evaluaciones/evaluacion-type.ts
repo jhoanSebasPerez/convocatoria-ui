@@ -16,5 +16,5 @@ export interface Evaluacion {
     observaciones?: string; // Observaciones generales del evaluador
     criteriosEvaluacion: EvaluacionCriterio[];// Lista de criterios evaluados
     rubrica?: Rubrica; // Rúbrica utilizada para la evaluación
-    fechaEvaluacion: string; // Fecha de la evaluación// Observaciones generales del evaluador
+    createAt?: string; // Fecha de la evaluación// Observaciones generales del evaluador
 }

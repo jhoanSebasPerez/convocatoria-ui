@@ -118,16 +118,15 @@ export default function ProyectoDetalle() {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ fontWeight: "bold", pl: 0 }}>Nombre</TableCell>
-                                        <TableCell sx={{ fontWeight: "bold", pl: 0 }}>Email</TableCell>
-                                        <TableCell sx={{ fontWeight: "bold", pl: 0 }} align="right">Acciones</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
+                                        <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {proyecto.estudiantes.map((estudiante) => (
                                         <TableRow key={estudiante.id}>
-                                            <TableCell sx={{ pl: 0 }}>{estudiante.fullname}</TableCell>
-                                            <TableCell sx={{ pl: 0 }}>{estudiante.email}</TableCell>
+                                            <TableCell>{estudiante.fullname}</TableCell>
+                                            <TableCell>{estudiante.email}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

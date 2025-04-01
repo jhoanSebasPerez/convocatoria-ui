@@ -48,14 +48,16 @@ export default function ProyectoPorCalificarPage() {
     }
 
     const handleEvaluacion = async (evaluacion: Evaluacion) => {
+        setLoading(true);
         const response = await createEvaluacion(evaluacion);
 
         if (!response.error) {
             setShowToast(true);
-            return;
+        } else {
+            setError("Error al guardar la evaluación para el proyecto");
         }
 
-        setError("Error al guardar la evaluación para el proyecto");
+        setLoading(false);
     }
 
     return (
@@ -78,7 +80,7 @@ export default function ProyectoPorCalificarPage() {
                 <Box sx={{ marginBottom: 4 }}>
                     <Typography variant="body1">{proyecto?.resumen}</Typography>
                 </Box>
-                <Box sx={{ display: 'flex' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     {proyecto?.documentoUrl ? (
                         <PdfViewer url={proyecto?.documentoUrl ?? ""} />
                     ) : (

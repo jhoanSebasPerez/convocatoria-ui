@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 export default async function createEvaluacion(evaluacion: Evaluacion) {
     const response = await post<Evaluacion>("evaluaciones", evaluacion);
+    console.log("Response from createEvaluacion:", response);
 
     if (response.error) {
         return { error: response.error };

@@ -7,6 +7,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { useRouter } from "next/navigation";
 import { API_URL } from "@/common/constants/api";
 import { Box, List, ListItem, ListItemText, Paper } from "@mui/material";
+import searchItems from "@/modules/common/search-server";
 
 interface Result {
     id: string;
@@ -25,11 +26,14 @@ export default function Search() {
         setQuery(value);
 
         if (value.length > 1) {
-            const response = await fetch(`${API_URL}/search?q=${value}`);
-            const data = await response.json();
-            setResults(data);
-        } else {
-            setResults([]);
+            const response: any = await searchItems(value);
+
+            if (response.error) {
+                setResults([]);
+                return;
+            }
+
+            setResults(response);
         }
     };
 

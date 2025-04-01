@@ -44,7 +44,7 @@ const EvaluacionDetalle: React.FC<Props> = ({ evaluacion }) => {
                 <Box>
                     <Typography variant="h6">Fecha de Evaluación:</Typography>
                     <Chip
-                        label={dayjs(evaluacion.fechaEvaluacion).format("DD-MM-YYYY")}
+                        label={dayjs(evaluacion.createAt).format("DD-MM-YYYY")}
                         color="primary"
                         sx={{ fontWeight: "bold" }}
                     />
@@ -66,7 +66,7 @@ const EvaluacionDetalle: React.FC<Props> = ({ evaluacion }) => {
             <TableContainer sx={{ marginLeft: 0 }} component={Paper}>
                 <Table >
                     <TableHead>
-                        <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                        <TableRow>
                             <TableCell sx={{ fontWeight: "bold" }}>Criterio</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Descripción</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Puntaje</TableCell>

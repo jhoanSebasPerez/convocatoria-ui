@@ -1,17 +1,31 @@
 "use server";
 
+import { API_URL } from "@/common/constants/api";
 import { FormResponse } from "@/common/interfaces/form-response";
-import { post } from "@/common/util/fetch";
+import { getErrorMessage } from "@/common/util/error";
 import { redirect } from "next/navigation";
-import { RegisterRequest } from "../auth-types";
 
-export default async function createUser(_prevState: FormResponse, data: RegisterRequest) {
+export default async function createUser(
+    _prevState: FormResponse,
+    formData: FormData
+) {
+    const bodyData = {
+        fullname: formData.get("fullname"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+        roles: ["ESTUDIANTE"]
+    }
+    const response = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(bodyData),
+    });
 
-    const { error } = await post("users", data);
-
-    if (error) {
-        return { error };
+    const parsedRes = await response.json();
+    if (!response.ok) {
+        return { error: getErrorMessage(parsedRes) };
     }
 
-    redirect("/")
+    redirect("/registro-exitoso");
 }
