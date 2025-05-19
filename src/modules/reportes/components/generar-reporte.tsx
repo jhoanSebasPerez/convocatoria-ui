@@ -10,6 +10,7 @@ import { API_URL } from "@/common/constants/api";
 import dayjs from "dayjs";
 import 'dayjs/locale/es';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { post } from "@/common/util/fetch";
 
 export default function GenerarReporte() {
   const [fechaInicio, setFechaInicio] = useState<any>(null);
@@ -37,19 +38,16 @@ export default function GenerarReporte() {
         return fecha.format('YYYY-MM-DD');
       };
 
-      const response = await axios.post(
-        `${API_URL}/reportes/generar-pdf`,
+      const response = await post(
+        `reportes/generar-pdf`,
         {
           fechaInicio: formatearFecha(fechaInicio),
           fechaFin: formatearFecha(fechaFin),
-        },
-        {
-          responseType: "blob",
         }
       );
 
-      // Crear URL para el blob y forzar descarga
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const blob = await response.data;
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `reporte_${formatearFecha(fechaInicio)}_${formatearFecha(fechaFin)}.pdf`);

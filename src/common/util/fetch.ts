@@ -1,7 +1,7 @@
 "use server"
 
 import { API_URL } from "../constants/api";
-import { ResponseType } from "../interfaces/response-type";
+import { ResponseType } from '../interfaces/response-type';
 import { getErrorMessage } from "./error";
 import { cookies } from "next/headers";
 
@@ -42,6 +42,10 @@ export const post = async <T>(path: string, data: T) => {
         headers: { ...headers },
         body: JSON.stringify(data),
     });
+
+    if (response.type === "basic") {
+        return { error: "", data: response.blob() };
+    }
 
     const parsedRes = await response.json();
     if (!response.ok) {
