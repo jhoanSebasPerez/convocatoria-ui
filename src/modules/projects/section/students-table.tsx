@@ -13,7 +13,7 @@ export default function StudentTable({ estudiantes }: EstudiantesGridProps) {
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID", width: 200 },
         { field: "fullname", headerName: "Nombre completo", width: 200 },
-        { field: "email", headerName: "Correo Electrónico", width: 250 }
+        { field: "email", headerName: "Correo Electrónico", width: 700 }
     ];
 
     return (

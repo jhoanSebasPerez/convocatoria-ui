@@ -6,7 +6,11 @@ export interface EvaluacionCriterio {
     descripcion?: string;
     criterioId: string; // ID del criterio evaluado
     puntaje: number; // Puntaje asignado al criterio
-    comentario?: string; // Comentario opcional sobre el criterio
+    comentario?: string;
+    criterio: {
+        nombre: string;
+        descripcion: string;
+    } // Comentario opcional sobre el criterio
 }
 
 export interface Evaluacion {

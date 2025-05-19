@@ -38,7 +38,7 @@ const EstadoEvaluacionesChart = () => {
             <Typography variant="h6" fontWeight="bold">
                 Estado de Evaluaciones de Proyectos
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={450}>
                 <PieChart>
                     <Pie
                         data={data}

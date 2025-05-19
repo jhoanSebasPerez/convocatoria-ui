@@ -2,7 +2,8 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { use, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { PictureAsPdf, CalendarMonth, FileDownload } from "@mui/icons-material";
 import {
     TextField,
     Select,
@@ -18,6 +19,17 @@ import {
     Grid,
     Stack,
     Alert,
+    IconButton,
+    Card,
+    CardContent,
+    Collapse,
+    Fade,
+    FormHelperText,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    InputAdornment,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { API_URL } from "@/common/constants/api";
@@ -25,10 +37,36 @@ import createProject from "@/modules/projects/server/create-project";
 import { useParams } from "next/navigation";
 import getConvocatoriaById from "@/modules/convocatorias/server/get-convocatoria-by-id";
 import { Convocatoria } from "@/modules/convocatorias/convocatoria-types";
-import { CloudUploadOutlined, RemoveCircle } from "@mui/icons-material";
+import { CloudUploadOutlined, RemoveCircle, PersonAdd, CheckCircle, ExpandMore, ExpandLess, AddCircleOutline, VisibilityOff } from "@mui/icons-material";
 import CustomDatePicker from "@/components/date-picker";
 import uploadFileServer from "@/modules/projects/server/upload-file";
 
+// Define interfaces for form data structure
+interface Estudiante {
+    nombre: string;
+    correo: string;
+}
+
+interface FormValues {
+    titulo: string;
+    resumen: string;
+    fechaInicio: dayjs.Dayjs;
+    fechaFin: dayjs.Dayjs;
+    tiempoEjecucion: string;
+    tipoProyecto: string;
+    curso: string;
+    docenteOrientador: string;
+    estadoFormulacion: string;
+    estadoEjecucion: string;
+    estadoTerminado: string;
+    nombreSemillero: string;
+    siglaSemillero: string;
+    categoriaProyecto: string;
+    directorSemillero: string;
+    modalidadPresentacion: string;
+    estudiantes: Estudiante[];
+    documento: string;
+}
 
 export default function FormularioProyecto() {
 
@@ -36,7 +74,7 @@ export default function FormularioProyecto() {
 
     const [convocatoria, setConvocatoria] = useState<Convocatoria>();
 
-    const { control, register, handleSubmit, setValue, watch } = useForm({
+    const { control, register, handleSubmit, setValue, watch, formState: { errors }, trigger } = useForm<FormValues>({
         defaultValues: {
             titulo: "",
             resumen: "",
@@ -54,9 +92,10 @@ export default function FormularioProyecto() {
             categoriaProyecto: "INNOVACION",
             directorSemillero: "",
             modalidadPresentacion: "POSTER",
-            estudiantes: [{ nombre: "", correo: "" }],
+            estudiantes: [],
             documento: localStorage.getItem("uploadedFileUrl") ?? "",
         },
+        mode: "onChange"
     });
 
     const { fields, append, remove } = useFieldArray({
@@ -69,6 +108,12 @@ export default function FormularioProyecto() {
     const [progress, setProgress] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [showEstudiantesForm, setShowEstudiantesForm] = useState(false);
+    const [openReportModal, setOpenReportModal] = useState(false);
+    const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(dayjs().subtract(1, 'month'));
+    const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(dayjs());
+    const [generatingReport, setGeneratingReport] = useState(false);
+    const [reportError, setReportError] = useState("");
 
     const tipoProyecto = watch("tipoProyecto");
 
@@ -132,12 +177,27 @@ export default function FormularioProyecto() {
         localStorage.setItem("uploadedFileUrl", "");
     };
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: FormValues) => {
+        if (showEstudiantesForm && fields.length > 0) {
+            const estudiantesValidos = fields.every((field, index) => {
+                const nombreValido = !!watch(`estudiantes.${index}.nombre`);
+                const correoValido = !!watch(`estudiantes.${index}.correo`);
+
+                return nombreValido && correoValido;
+            });
+
+            if (!estudiantesValidos) {
+                setError("Completa todos los campos de estudiantes o cierra la sección");
+                return;
+            }
+        }
+
         setLoading(true);
+
         const formattedData = {
             titulo: data.titulo,
             resumen: data.resumen,
-            convocatoriaId: Array.isArray(convocatoriaId) ? convocatoriaId[0] : String(convocatoriaId), // Aquí deberías pasar el ID real de la convocatoria
+            convocatoriaId: Array.isArray(convocatoriaId) ? convocatoriaId[0] : String(convocatoriaId),
             tiempoEjecucion: parseInt(data.tiempoEjecucion, 10),
             fechaInicio: data.fechaInicio.toISOString(),
             documentoUrl: data.documento,
@@ -145,7 +205,7 @@ export default function FormularioProyecto() {
             estudiantes: data.estudiantes.map((estudiante: { nombre: string, correo: string }) => ({
                 fullname: estudiante.nombre,
                 email: estudiante.correo,
-            })), // Solo nombres
+            })),
             proyectoAula: data.tipoProyecto === "AULA" ? {
                 curso: data.curso,
                 docenteOrientador: data.docenteOrientador,
@@ -276,28 +336,138 @@ export default function FormularioProyecto() {
                             </Box>
                         </Box>
                         <Typography variant="h6" gutterBottom>Estudiantes</Typography>
-                        {fields.map((item, index) => (
-                            <Grid sx={{ marginBottom: "8px", gap: "3" }} container key={item.id} alignItems="space-between">
-                                <Grid item xs={5}>
-                                    <TextField fullWidth placeholder="Nombre" {...register(`estudiantes.${index}.nombre`)} />
-                                </Grid>
-                                <Grid sx={{ marginLeft: "8px" }} item xs={5}>
-                                    <TextField fullWidth placeholder="Correo" {...register(`estudiantes.${index}.correo`)} />
-                                </Grid>
-                                <Grid sx={{ marginLeft: "13px" }} item xs={1}>
-                                    <Button fullWidth variant="contained" color="error" onClick={() => remove(index)}>
-                                        <RemoveCircle />
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        ))}
-                        <p className="text-slate-600 text-sm"><i>Usted será también agregado como integrante del proyecto por defecto</i></p>
 
-                        {fields?.length < 3 && (
-                            <Button sx={{ marginTop: "8px", marginBottom: "16px" }} variant="contained" color="primary" onClick={() => append({ nombre: "", correo: "" })}>
-                                + Agregar estudiante
-                            </Button>
-                        )}
+                        <Box sx={{ mt: 3, mb: 2 }}>
+                            <Card variant="outlined" sx={{
+                                borderRadius: 2,
+                                borderColor: showEstudiantesForm ? 'primary.main' : 'divider',
+                                transition: 'all 0.3s ease'
+                            }}>
+                                <CardContent sx={{ pb: showEstudiantesForm ? 2 : 1, pt: 2 }}>
+                                    <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <PersonAdd sx={{ color: 'primary.main', mr: 1.5 }} />
+                                            <Typography variant="h6">Estudiantes</Typography>
+                                        </Box>
+
+                                        <Button
+                                            variant={showEstudiantesForm ? "outlined" : "contained"}
+                                            color={showEstudiantesForm ? "secondary" : "primary"}
+                                            onClick={() => {
+                                                if (showEstudiantesForm && fields.length === 0) {
+                                                    append({ nombre: "", correo: "" });
+                                                }
+                                                setShowEstudiantesForm(!showEstudiantesForm);
+                                            }}
+                                            startIcon={showEstudiantesForm ? <VisibilityOff /> : <AddCircleOutline />}
+                                            size="small"
+                                        >
+                                            {showEstudiantesForm ? "Ocultar" : fields.length > 0 ? "Editar estudiantes" : "Agregar estudiantes"}
+                                        </Button>
+                                    </Stack>
+
+                                    {/* Mensaje cuando no es visible pero hay estudiantes */}
+                                    {!showEstudiantesForm && fields.length > 0 && (
+                                        <Box sx={{ mt: 1.5 }}>
+                                            <Alert icon={<CheckCircle />} severity="success" sx={{ mb: 1 }}>
+                                                {fields.length} {fields.length === 1 ? 'estudiante agregado' : 'estudiantes agregados'}
+                                            </Alert>
+                                            <Typography variant="caption" color="text.secondary">
+                                                <i>Usted será también agregado como integrante del proyecto por defecto</i>
+                                            </Typography>
+                                        </Box>
+                                    )}
+
+                                    {/* Formulario de estudiantes colapsable */}
+                                    <Collapse in={showEstudiantesForm} timeout="auto">
+                                        <Box sx={{ mt: 2 }}>
+                                            {fields.length === 0 ? (
+                                                <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                                                    <Button
+                                                        variant="outlined"
+                                                        onClick={() => append({ nombre: "", correo: "" })}
+                                                        startIcon={<AddCircleOutline />}
+                                                    >
+                                                        Añadir primer estudiante
+                                                    </Button>
+                                                </Box>
+                                            ) : (
+                                                <>
+                                                    {fields.map((item, index) => (
+                                                        <Box key={item.id} sx={{ mb: 2 }}>
+                                                            <Grid container spacing={2}>
+                                                                <Grid item xs={12} sm={5}>
+                                                                    <TextField
+                                                                        fullWidth
+                                                                        label="Nombre del estudiante"
+                                                                        variant="outlined"
+                                                                        size="small"
+                                                                        {...register(`estudiantes.${index}.nombre`, {
+                                                                            required: showEstudiantesForm ? "Nombre requerido" : false
+                                                                        })}
+                                                                        error={showEstudiantesForm && !watch(`estudiantes.${index}.nombre`)}
+                                                                        helperText={showEstudiantesForm && !watch(`estudiantes.${index}.nombre`) ? "Campo requerido" : ""}
+                                                                    />
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={5}>
+                                                                    <TextField
+                                                                        fullWidth
+                                                                        label="Correo electrónico"
+                                                                        variant="outlined"
+                                                                        size="small"
+                                                                        type="email"
+                                                                        {...register(`estudiantes.${index}.correo`, {
+                                                                            required: showEstudiantesForm ? "Correo requerido" : false,
+                                                                            pattern: {
+                                                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                                                message: "Correo inválido"
+                                                                            }
+                                                                        })}
+                                                                        error={showEstudiantesForm && !watch(`estudiantes.${index}.correo`)}
+                                                                        helperText={showEstudiantesForm && !watch(`estudiantes.${index}.correo`) ? "Campo requerido" : ""}
+                                                                    />
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={2}>
+                                                                    <Button
+                                                                        fullWidth
+                                                                        variant="outlined"
+                                                                        color="error"
+                                                                        onClick={() => remove(index)}
+                                                                        size="medium"
+                                                                        sx={{ height: '100%' }}
+                                                                    >
+                                                                        <RemoveCircle />
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Box>
+                                                    ))}
+
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                                                        {fields.length < 3 && (
+                                                            <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                size="small"
+                                                                onClick={() => append({ nombre: "", correo: "" })}
+                                                                startIcon={<AddCircleOutline />}
+                                                                disabled={fields.length >= 3}
+                                                            >
+                                                                Añadir estudiante
+                                                            </Button>
+                                                        )}
+
+                                                        <Typography variant="caption" color="text.secondary" sx={{ mt: 1 }}>
+                                                            <i>Usted será también agregado como integrante del proyecto por defecto</i>
+                                                        </Typography>
+                                                    </Box>
+                                                </>
+                                            )}
+                                        </Box>
+                                    </Collapse>
+                                </CardContent>
+                            </Card>
+                        </Box>
 
                         <Typography variant="h6" gutterBottom mt={2}>Subir Documento</Typography>
                         {!fileName ? (
@@ -334,22 +504,143 @@ export default function FormularioProyecto() {
                         {loading && <CircularProgress size={8} sx={{ marginRight: 1 }} />}
                         Guardar Proyecto
                     </Button>
+                    <Button 
+                        variant="outlined" 
+                        color="secondary" 
+                        startIcon={<PictureAsPdf />}
+                        onClick={() => setOpenReportModal(true)}
+                        sx={{ ml: 2 }}
+                    >
+                        Generar Reporte
+                    </Button>
                 </Grid>
             </form>
             <Snackbar
                 open={!!error}
                 autoHideDuration={3000}
                 onClose={() => setError("")}
-                anchorOrigin={{ vertical: "top", horizontal: "right" }} // 🔹 Ajusta la posición si deseas
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
             >
                 <Alert
                     onClose={() => setError("")}
-                    severity="error" // 🔹 Cambia el color a rojo
-                    sx={{ width: "100%" }} // 🔹 Asegura que ocupe todo el ancho del Snackbar
+                    severity="error"
+                    sx={{ width: "100%" }}
                 >
                     {error}
                 </Alert>
             </Snackbar>
+
+            {/* Modal para Generar Reporte */}
+            <Dialog open={openReportModal} onClose={() => setOpenReportModal(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <PictureAsPdf color="primary" />
+                        <Typography variant="h6">Generar Reporte PDF</Typography>
+                    </Stack>
+                </DialogTitle>
+                <DialogContent>
+                    <Typography variant="body2" color="text.secondary" paragraph>
+                        Seleccione el rango de fechas para generar el reporte de proyectos.
+                    </Typography>
+                    
+                    <Grid container spacing={3} sx={{ mt: 1 }}>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
+                                <Typography variant="caption" color="text.secondary" mb={1}>
+                                    Fecha Inicio:
+                                </Typography>
+                                <CustomDatePicker
+                                    value={startDate}
+                                    onChange={(newValue) => setStartDate(newValue)}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
+                                <Typography variant="caption" color="text.secondary" mb={1}>
+                                    Fecha Fin:
+                                </Typography>
+                                <CustomDatePicker
+                                    value={endDate}
+                                    onChange={(newValue) => setEndDate(newValue)}
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid>
+
+                    {reportError && (
+                        <Alert severity="error" sx={{ mt: 2 }}>
+                            {reportError}
+                        </Alert>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenReportModal(false)}>Cancelar</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={generatingReport ? <CircularProgress size={20} /> : <FileDownload />}
+                        disabled={!startDate || !endDate || generatingReport}
+                        onClick={async () => {
+                            if (!startDate || !endDate) {
+                                setReportError("Por favor seleccione ambas fechas");
+                                return;
+                            }
+
+                            if (endDate.isBefore(startDate)) {
+                                setReportError("La fecha fin debe ser posterior a la fecha de inicio");
+                                return;
+                            }
+
+                            setReportError("");
+                            setGeneratingReport(true);
+
+                            try {
+                                // Formato ISO para las fechas
+                                const fechaInicio = startDate.format('YYYY-MM-DD');
+                                const fechaFin = endDate.format('YYYY-MM-DD');
+
+                                // Crear un enlace para descargar el PDF
+                                const url = `${API_URL}/reportes/generar-pdf`;
+                                const response = await fetch(url, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ fechaInicio, fechaFin }),
+                                });
+
+                                if (!response.ok) {
+                                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                                }
+
+                                // Obtener el blob del PDF
+                                const blob = await response.blob();
+                                const downloadUrl = window.URL.createObjectURL(blob);
+                                
+                                // Crear un enlace temporal y hacer clic en él
+                                const link = document.createElement('a');
+                                link.href = downloadUrl;
+                                link.download = `reporte_${fechaInicio}_${fechaFin}.pdf`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+
+                                // Limpieza
+                                window.URL.revokeObjectURL(downloadUrl);
+                                setOpenReportModal(false);
+                            } catch (error: any) {
+                                console.error('Error al generar el reporte:', error);
+                                setReportError(`Error al generar el reporte: ${error.message || 'Error desconocido'}`);
+                            } finally {
+                                setGeneratingReport(false);
+                            }
+                        }}
+                    >
+                        {generatingReport ? 'Generando...' : 'Generar Reporte'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Paper >
     );
 }

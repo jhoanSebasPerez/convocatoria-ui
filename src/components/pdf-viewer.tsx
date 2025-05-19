@@ -8,11 +8,13 @@ import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
 
 const PdfViewer = ({ url }: { url: string }) => {
 
+    console.log(url);
+
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     return url ? (
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11/build/pdf.worker.js">
-            <div style={{ height: '750px' }}>
+            <div style={{ height: '100%' }}>
                 <Viewer
                     fileUrl={url}
                     plugins={[

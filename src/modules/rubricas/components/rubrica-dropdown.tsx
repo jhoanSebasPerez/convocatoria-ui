@@ -25,6 +25,7 @@ export default function RubricaDropdown({
         fetchRubricas(query);
     }, [query]);
 
+
     return (
         <Autocomplete
             options={rubricas}

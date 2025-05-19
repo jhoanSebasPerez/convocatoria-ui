@@ -20,8 +20,8 @@ export default function ProyectosPorTipoChart() {
     }, []);
 
     const chartData = [
-        { name: "Proyectos de Aula", value: data?.proyectosAula ?? 0 },
-        { name: "Proyectos de Semillero", value: data?.proyectosSemillero ?? 0 },
+        { name: "Aula", value: data?.proyectosAula ?? 0 },
+        { name: "Semillero", value: data?.proyectosSemillero ?? 0 },
     ];
 
     if (loading) {
@@ -37,7 +37,7 @@ export default function ProyectosPorTipoChart() {
             <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
                 Distribución de Proyectos
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={450}>
                 <PieChart>
                     <Pie
                         data={chartData}
@@ -45,7 +45,7 @@ export default function ProyectosPorTipoChart() {
                         cy="50%"
                         labelLine={false}
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                        outerRadius={100}
+                        outerRadius={120}
                         fill="#8884d8"
                         dataKey="value"
                     >

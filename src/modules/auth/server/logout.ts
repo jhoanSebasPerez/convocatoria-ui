@@ -8,8 +8,6 @@ export default async function logout() {
 
     const response = await post("auth/logout", {});
 
-    console.log(response);
-
     if (response.data.success) {
         const cookieStore = await cookies();
         cookieStore.delete("Authentication");

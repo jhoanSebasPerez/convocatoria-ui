@@ -23,6 +23,8 @@ interface Props {
 
 const EvaluacionDetalle: React.FC<Props> = ({ evaluacion }) => {
 
+    console.log(evaluacion.criteriosEvaluacion);
+
     return (
         <Paper elevation={3} sx={{ padding: 2, maxWidth: 900, margin: "auto", mt: 4 }}>
             <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -73,19 +75,30 @@ const EvaluacionDetalle: React.FC<Props> = ({ evaluacion }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {evaluacion.criteriosEvaluacion.map((criterio) => (
-                            <TableRow key={criterio.id}>
-                                <TableCell>{criterio.nombre || `Criterio ID: ${criterio.criterioId}`}</TableCell>
-                                <TableCell>{criterio.descripcion}</TableCell>
-                                <TableCell>
-                                    <Chip
-                                        label={`${criterio.puntaje} pts`}
-                                        color="secondary"
-                                        sx={{ fontWeight: "bold" }}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {evaluacion.criteriosEvaluacion.map((criterio) => {
+                            // Find the matching criterion in the rubrica if available
+                            const criterioRubrica = evaluacion.rubrica?.criterios?.find(
+                                c => c.id === criterio.criterioId
+                            );
+
+                            return (
+                                <TableRow key={criterio.id}>
+                                    <TableCell>
+                                        <Typography variant="body1" fontWeight="medium">
+                                            {criterio.criterio?.nombre || criterioRubrica?.nombre || `Criterio ${criterio.criterioId.substring(0, 8)}`}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>{criterio.criterio?.descripcion || criterioRubrica?.descripcion}</TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={`${criterio.puntaje} pts`}
+                                            color="secondary"
+                                            sx={{ fontWeight: "bold" }}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>

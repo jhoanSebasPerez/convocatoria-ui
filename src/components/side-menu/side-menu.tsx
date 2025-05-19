@@ -76,7 +76,7 @@ export default function SideMenu() {
     return (
         <Drawer variant="permanent" open={open}>
             {/* 🔹 Botón para expandir/colapsar */}
-            <Box sx={{ display: "flex", justifyContent: open ? "space-between" : "center", p: 1.5 }}>
+            <Box sx={{ display: "flex", justifyContent: open ? "space-between" : "center", alignItems: "center", p: 1.5 }}>
                 {open && <RolHeader />}
                 <IconButton onClick={toggleDrawer} sx={{ ml: open ? 1 : "auto" }}>
                     {open ? <MenuOpenIcon /> : <MenuIcon />}

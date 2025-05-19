@@ -32,7 +32,7 @@ export default function AddDocenteModal(
 
         try {
             const response = await createDocente(data);
-            console.log(response)
+            console.log(response);
 
             if (response.error) throw new Error(response.error || "Error creando docente");
 
