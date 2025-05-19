@@ -17,7 +17,13 @@ const ProyectoEvaluacion: React.FC<EvaluacionProps> = ({ proyecto, criterios, on
     const [criteriosEvaluacion, setCriteriosEvaluacion] = useState(
         criterios.map((criterio) => ({
             criterioId: criterio.id as string,
-            puntaje: criterio.puntajeMin
+            puntaje: criterio.puntajeMin,
+            nombre: criterio.nombre,
+            descripcion: criterio.descripcion,
+            criterio: {
+                nombre: criterio.nombre,
+                descripcion: criterio.descripcion
+            }
         })) || []
     );
 
